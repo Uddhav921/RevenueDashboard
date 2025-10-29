@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solithix — Brand & Growth Studio</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#00bcd4">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Solithix">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="https://progressier.app/D5QVMZei66P4vY5gGXqH/progressier.json"/>
+  <script defer src="https://progressier.app/D5QVMZei66P4vY5gGXqH/script.js"></script>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="pricing.html">Pricing</a>
+        <button id="loginBtn" class="btn btn-login">Admin Login</button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Turning Ideas into Brands with Purpose.</h1>
+      <p>We help startups and businesses build clarity, trust, and momentum through design and strategy.</p>
+      <a href="pricing.html" class="btn">View Plans</a>
+    </div>
+  </section>
+
+  <section id="services" class="services">
+    <div class="container">
+      <h2>What We Offer</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Brand Strategy</h3>
+          <p>Positioning, messaging, and brand systems that define who you are.</p>
+        </div>
+        <div class="card">
+          <h3>Brand Identity</h3>
+          <p>Logo, color systems, typography, and visuals that connect.</p>
+        </div>
+        <div class="card">
+          <h3>Web Design & Dev</h3>
+          <p>Modern, responsive websites that communicate and convert.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Admin Login</h2>
+      <form id="loginForm">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit" class="btn">Login</button>
+      </form>
+      <p id="loginError" class="error-message"></p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>2025 Solithix — Building Clarity & Credibility for the Next Generation of Brands.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Check if user is already logged in
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      document.getElementById('loginBtn').textContent = 'Admin Dashboard';
+      document.getElementById('loginBtn').onclick = () => {
+        window.location.href = 'payment.html';
+      };
+    } else {
+      // Show login modal
+      const modal = document.getElementById('loginModal');
+      const btn = document.getElementById('loginBtn');
+      const span = document.getElementsByClassName('close')[0];
+      const loginForm = document.getElementById('loginForm');
+      const loginError = document.getElementById('loginError');
+
+      btn.onclick = () => {
+        modal.style.display = 'block';
+      };
+
+      span.onclick = () => {
+        modal.style.display = 'none';
+        loginError.textContent = '';
+      };
+
+      window.onclick = (event) => {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+          loginError.textContent = '';
+        }
+      };
+
+      loginForm.onsubmit = (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Static credentials (username: admin, password: admin123)
+        if (username === 'admin' && password === 'admin123') {
+          localStorage.setItem('isLoggedIn', 'true');
+          window.location.href = 'payment.html';
+        } else {
+          loginError.textContent = 'Invalid username or password';
+        }
+      };
+    }
+  </script>
+
+  <script>
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful');
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
