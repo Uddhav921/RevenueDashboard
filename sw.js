@@ -1,3 +1,4 @@
+importScripts("https://progressier.app/wDpYDhLBHTDMLE0rljkJ/sw.js" );
 const CACHE_NAME = 'solithix-v2';
 const ASSETS = [
   './',
