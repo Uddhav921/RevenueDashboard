@@ -1,4 +1,6 @@
-importScripts("https://progressier.app/wDpYDhLBHTDMLE0rljkJ/sw.js" );
+// Import external Progressier script
+importScripts("https://progressier.app/wDpYDhLBHTDMLE0rljkJ/sw.js");
+
 const CACHE_NAME = 'solithix-v2';
 const ASSETS = [
   './',
@@ -14,82 +16,86 @@ const ASSETS = [
   'https://checkout.razorpay.com/v1/checkout.js'
 ];
 
-// Install event - cache all static assets
+// Detect if running locally (Live Server or localhost)
+const isLocalhost =
+  self.location.hostname === 'localhost' ||
+  self.location.hostname.startsWith('127.') ||
+  self.location.hostname.startsWith('192.');
+
+// =============================
+// INSTALL EVENT (cache for production)
+// =============================
 self.addEventListener('install', (event) => {
+  if (isLocalhost) {
+    console.log('⚙️ Development mode: skipping cache install');
+    return;
+  }
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Caching app shell');
+        console.log('📦 Caching app shell');
         return cache.addAll(ASSETS);
       })
-      .catch(err => {
-        console.error('Cache addAll failed:', err);
-      })
+      .catch((err) => console.error('❌ Cache addAll failed:', err))
   );
 });
 
-// Activate event - clean up old caches
+// =============================
+// ACTIVATE EVENT (clear old caches)
+// =============================
 self.addEventListener('activate', (event) => {
+  if (isLocalhost) {
+    console.log('⚙️ Development mode: skipping cache cleanup');
+    return;
+  }
+
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME)
           .map((name) => caches.delete(name))
-      );
-    })
+      )
+    )
   );
 });
 
-// Fetch event - serve from cache, falling back to network
+// =============================
+// FETCH EVENT
+// =============================
 self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
-  // Skip cross-origin requests
-  if (!event.request.url.startsWith(self.location.origin) && 
-      !event.request.url.startsWith('https://checkout.razorpay.com') &&
-      !event.request.url.startsWith('https://fonts.googleapis.com') &&
-      !event.request.url.startsWith('https://fonts.gstatic.com')) {
+  // ✅ Development mode: always fetch from network
+  if (isLocalhost) {
+    event.respondWith(fetch(event.request));
     return;
   }
 
+  // ✅ Production mode: cache-first strategy
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // Return cached response if found
-        if (cachedResponse) {
-          return cachedResponse;
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) return cachedResponse;
+
+      const fetchRequest = event.request.clone();
+      return fetch(fetchRequest).then((response) => {
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
         }
 
-        // Clone the request
-        const fetchRequest = event.request.clone();
+        const responseToCache = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
 
-        // Make network request and cache the response
-        return fetch(fetchRequest).then(
-          (response) => {
-            // Check if we received a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone the response
-            const responseToCache = response.clone();
-
-            // Cache the response
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-
-            return response;
-          }
-        );
-      })
-      .catch(() => {
-        // If both cache and network fail, show a fallback
-        if (event.request.mode === 'navigate') {
-          return caches.match('./offline.html');
-        }
-      })
+        return response;
+      });
+    }).catch(() => {
+      if (event.request.mode === 'navigate') {
+        return caches.match('./offline.html');
+      }
+    })
   );
 });
