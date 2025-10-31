@@ -238,20 +238,22 @@
 
     // Load saved records
     function loadRecords() {
-      const data = JSON.parse(localStorage.getItem("payments") || "[]");
-      const tbody = document.querySelector("#recordTable tbody");
-      tbody.innerHTML = "";
-      data.forEach(record => {
-        const row = `<tr>
-          <td>${record.receiptNo}</td>
-          <td>${record.client}</td>
-          <td>${record.project}</td>
-          <td>₹${record.amount}</td>
-          <td>${record.date}</td>
-          <td>${record.paymentId}</td>
-          <td><button class="delete-btn" data-receipt="${record.receiptNo}">Delete</button></td>
-        </tr>`;
-        tbody.innerHTML += row;
+      const records = JSON.parse(localStorage.getItem('payments') || '[]');
+      const tbody = document.querySelector('#recordTable tbody');
+      tbody.innerHTML = '';
+
+      records.forEach((record, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td data-label="Receipt No">${index + 1}</td>
+          <td data-label="Client">${record.client}</td>
+          <td data-label="Project">${record.project}</td>
+          <td data-label="Amount (₹)">₹${record.amount}</td>
+          <td data-label="Date">${new Date(record.date).toLocaleDateString()}</td>
+          <td data-label="Payment ID">${record.paymentId}</td>
+          <td data-label="Action"><button class="delete-btn" data-receipt="${record.receiptNo}">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
       });
     }
     loadRecords();
