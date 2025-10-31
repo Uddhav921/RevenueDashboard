@@ -208,6 +208,7 @@
     <th>Client</th>
     <th>Project</th>
     <th>Amount (₹)</th>
+    <th>Email</th>
     <th>Date</th>
     <th>Payment ID</th>
     <th>Action</th>
@@ -246,12 +247,15 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td data-label="Receipt No">${index + 1}</td>
-          <td data-label="Client">${record.client}</td>
-          <td data-label="Project">${record.project}</td>
-          <td data-label="Amount (₹)">₹${record.amount}</td>
-          <td data-label="Date">${new Date(record.date).toLocaleDateString()}</td>
-          <td data-label="Payment ID">${record.paymentId}</td>
-          <td data-label="Action"><button class="delete-btn" data-receipt="${record.receiptNo}">Delete</button></td>
+          <td data-label="Client">${record.client || 'N/A'}</td>
+          <td data-label="Project">${record.project || 'N/A'}</td>
+          <td data-label="Amount (₹)">₹${record.amount || '0'}</td>
+          <td data-label="Email">${record.email || 'N/A'}</td>
+          <td data-label="Date">${record.date ? new Date(record.date).toLocaleDateString() : 'N/A'}</td>
+          <td data-label="Payment ID" class="payment-id">${record.paymentId || 'N/A'}</td>
+          <td data-label="Action">
+            <button class="delete-btn" data-receipt="${record.receiptNo}">Delete</button>
+          </td>
         `;
         tbody.appendChild(tr);
       });

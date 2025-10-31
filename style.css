@@ -117,6 +117,7 @@ th, td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid var(--gray-dark);
+  word-break: break-word;
 }
 
 th {
@@ -126,6 +127,13 @@ th {
   text-transform: uppercase;
   font-size: 0.8rem;
   letter-spacing: 0.5px;
+}
+
+/* Style for Payment ID cell */
+td:has([data-label="Payment ID"]) {
+  font-family: monospace;
+  font-size: 0.9em;
+  word-break: break-all;
 }
 
 tr:hover {
