@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
   <title>Solithix — Brand & Growth Studio</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="style.css">
 
   <!-- PWA + Progressier Integration -->
-<link rel="manifest" href="https://progressier.app/mV5vZ0zVKhWrQdkxQubt/progressier.json"/>
-<script defer src="https://progressier.app/mV5vZ0zVKhWrQdkxQubt/script.js"></script>
+  <link rel="manifest" href="https://progressier.app/mV5vZ0zVKhWrQdkxQubt/progressier.json"/>
+  <script defer src="https://progressier.app/mV5vZ0zVKhWrQdkxQubt/script.js"></script>
+  
   <!-- Meta Tags -->
-  <meta name="theme-color" content="#00bcd4">
+  <meta name="theme-color" content="#00bcd4" id="themeColor">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -25,9 +27,11 @@
 <body>
   <header>
     <nav>
+      <div class="logo">Solithix</div>
       <div class="nav-links">
         <a href="#services">Services</a>
         <a href="pricing.html">Pricing</a>
+     
         <button id="loginBtn" class="btn btn-login">Admin Login</button>
       </div>
     </nav>
@@ -80,6 +84,29 @@
       <p>2025 Solithix — Building Clarity & Credibility for the Next Generation of Brands.</p>
     </div>
   </footer>
+
+  <script>
+    // Theme Toggle Functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      const themeToggle = document.getElementById('themeToggle');
+      const themeIcon = themeToggle.querySelector('.theme-icon');
+      const themeColor = document.getElementById('themeColor');
+      
+      // Toggle theme on button click
+      themeToggle.addEventListener('click', () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        themeToggle.setAttribute('aria-pressed', !isDark);
+        themeIcon.textContent = isDark ? '🌙' : '☀️';
+        themeColor.setAttribute('content', isDark ? '#00bcd4' : '#121212');
+        
+        // Save preference
+        localStorage.setItem('theme', newTheme);
+      });
+    });
+  </script>
 
   <script>
     // Check if user is already logged in
@@ -142,5 +169,6 @@
       });
     }
   </script>
+  <script src="theme.js"></script>
 </body>
 </html>
